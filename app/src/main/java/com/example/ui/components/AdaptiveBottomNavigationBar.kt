@@ -3,10 +3,10 @@ package com.example.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -30,15 +30,8 @@ import com.example.utils.AppLanguage
 import com.example.utils.LocalizationManager
 import com.example.viewmodel.ActiveScreenTab
 
-data class NavItemSpec(
-    val tab: ActiveScreenTab,
-    val stringKey: String,
-    val fallbackTitle: String,
-    val icon: ImageVector
-)
-
 @Composable
-fun LandscapeNavigationRail(
+fun AdaptiveBottomNavigationBar(
     currentTab: ActiveScreenTab,
     currentLanguage: AppLanguage = AppLanguage.ENGLISH,
     onTabSelected: (ActiveScreenTab) -> Unit,
@@ -47,6 +40,7 @@ fun LandscapeNavigationRail(
 ) {
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
 
     val navItems = listOf(
         NavItemSpec(ActiveScreenTab.MAIN_HUB, "nav_hub", "Hub", Icons.Filled.Home),
@@ -65,79 +59,53 @@ fun LandscapeNavigationRail(
 
     Surface(
         modifier = modifier
-            .width(76.dp)
-            .fillMaxHeight(),
+            .fillMaxWidth()
+            .height(56.dp),
         color = StadiumSurface,
         border = androidx.compose.foundation.BorderStroke(1.dp, StadiumBorder)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 4.dp, horizontal = 2.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .horizontalScroll(scrollState)
+                .padding(horizontal = 4.dp, vertical = 3.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // App Branding Logo Mark
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(NaturalForest)
-                    .border(1.dp, NaturalForestLight, RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "FM",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        color = Color.White,
-                        fontWeight = FontWeight.Black,
-                        fontSize = 12.sp
-                    )
+            navItems.forEach { item ->
+                val isSelected = currentTab == item.tab
+                val localizedTitle = LocalizationManager.getString(item.stringKey, currentLanguage)
+                val displayTitle = if (localizedTitle.isNotBlank()) localizedTitle else item.fallbackTitle
+
+                AdaptiveBottomNavItem(
+                    title = displayTitle,
+                    icon = item.icon,
+                    isSelected = isSelected,
+                    onClick = {
+                        HapticController.performTactileClick(haptic, context)
+                        onTabSelected(item.tab)
+                    },
+                    testTag = "bottom_nav_${item.fallbackTitle.lowercase()}"
                 )
             }
 
-            Spacer(Modifier.height(4.dp))
-
-            // Navigation Tab Items List (Scrollable for small landscape screens)
-            LazyColumn(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(navItems, key = { it.tab.name }) { item ->
-                    val isSelected = currentTab == item.tab
-                    val localizedTitle = LocalizationManager.getString(item.stringKey, currentLanguage)
-                    NavThumbItem(
-                        title = if (localizedTitle.isNotBlank()) localizedTitle else item.fallbackTitle,
-                        icon = item.icon,
-                        isSelected = isSelected,
-                        onClick = {
-                            HapticController.performTactileClick(haptic, context)
-                            onTabSelected(item.tab)
-                        },
-                        testTag = "nav_${item.fallbackTitle.lowercase()}"
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(2.dp))
-                    NavThumbItem(
-                        title = LocalizationManager.getString("settings", currentLanguage),
-                        icon = Icons.Filled.Settings,
-                        isSelected = false,
-                        onClick = {
-                            HapticController.performTactileClick(haptic, context)
-                            onOpenSettings()
-                        },
-                        testTag = "nav_settings"
-                    )
-                }
-            }
+            // Quick Settings Item
+            AdaptiveBottomNavItem(
+                title = LocalizationManager.getString("settings", currentLanguage),
+                icon = Icons.Filled.Settings,
+                isSelected = false,
+                onClick = {
+                    HapticController.performTactileClick(haptic, context)
+                    onOpenSettings()
+                },
+                testTag = "bottom_nav_settings"
+            )
         }
     }
 }
 
 @Composable
-private fun NavThumbItem(
+private fun AdaptiveBottomNavItem(
     title: String,
     icon: ImageVector,
     isSelected: Boolean,
@@ -145,43 +113,42 @@ private fun NavThumbItem(
     testTag: String
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val accentColor = AppTheme.colors.primaryAccent
 
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(38.dp)
-            .padding(horizontal = 2.dp)
-            .clip(RoundedCornerShape(6.dp))
+            .widthIn(min = 60.dp)
+            .fillMaxHeight()
+            .clip(RoundedCornerShape(8.dp))
             .clickable(
                 interactionSource = interactionSource,
-                indication = ripple(bounded = true, color = NaturalForest),
+                indication = ripple(bounded = true, color = accentColor),
                 onClick = onClick
             )
             .testTag(testTag),
-        color = if (isSelected) NaturalForest.copy(alpha = 0.15f) else Color.Transparent,
-        shape = RoundedCornerShape(6.dp),
-        border = if (isSelected) androidx.compose.foundation.BorderStroke(1.dp, NaturalForest) else null
+        color = if (isSelected) accentColor.copy(alpha = 0.16f) else Color.Transparent,
+        shape = RoundedCornerShape(8.dp),
+        border = if (isSelected) androidx.compose.foundation.BorderStroke(1.dp, accentColor) else null
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 2.dp),
+                .padding(horizontal = 6.dp, vertical = 2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                tint = if (isSelected) NaturalForest else TextSecondary,
-                modifier = Modifier.size(16.dp)
+                tint = if (isSelected) accentColor else TextSecondary,
+                modifier = Modifier.size(18.dp)
             )
-            Spacer(modifier = Modifier.height(1.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelSmall.copy(
-                    fontSize = 8.sp,
-                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
-                    color = if (isSelected) NaturalForest else TextSecondary,
+                    fontSize = 9.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                    color = if (isSelected) accentColor else TextSecondary,
                     textAlign = TextAlign.Center
                 ),
                 maxLines = 1

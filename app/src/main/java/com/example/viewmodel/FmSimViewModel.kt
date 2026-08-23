@@ -15,11 +15,14 @@ import java.util.*
 import kotlin.random.Random
 
 enum class AppPhase {
-    SPLASH_PROFILE_MENU,
+    SPLASH_LOADING,
+    PROFILE_MENU,
+    NEW_CAREER_WIZARD,
     MAIN_CAREER
 }
 
 enum class ActiveScreenTab(val title: String, val iconName: String) {
+    MAIN_HUB("Main Hub", "hub"),
     TACTICS_SQUAD("Tactics & Squad", "tactics"),
     LIVE_MATCH("Live Match", "match"),
     TRAINING("Training & Academy", "training"),
@@ -37,7 +40,7 @@ class FmSimViewModel(
     private val repository: FmSimRepository = FmSimRepository()
 ) : ViewModel() {
 
-    private val _appPhase = MutableStateFlow(AppPhase.SPLASH_PROFILE_MENU)
+    private val _appPhase = MutableStateFlow(AppPhase.SPLASH_LOADING)
     val appPhase: StateFlow<AppPhase> = _appPhase.asStateFlow()
 
     val squad: StateFlow<List<Player>> = repository.squad
@@ -757,9 +760,61 @@ class FmSimViewModel(
         repository.recordMatchCompletion(record)
     }
 
+    fun completeSplashLoading() {
+        _appPhase.value = AppPhase.PROFILE_MENU
+    }
+
+    fun openNewCareerWizard() {
+        _appPhase.value = AppPhase.NEW_CAREER_WIZARD
+    }
+
+    fun cancelNewCareerWizard() {
+        _appPhase.value = AppPhase.PROFILE_MENU
+    }
+
     fun startOrContinueCareer() {
         _appPhase.value = AppPhase.MAIN_CAREER
-        _currentTab.value = ActiveScreenTab.TACTICS_SQUAD
+        _currentTab.value = ActiveScreenTab.MAIN_HUB
+    }
+
+    fun createNewCareerDetailed(
+        managerName: String,
+        managerNationality: String,
+        managerFlag: String,
+        managerArchetype: String,
+        region: String,
+        league: String,
+        clubName: String,
+        clubBadgeColor: Long,
+        transferBudget: Double,
+        stadium: String,
+        nationalTeam: String,
+        nationalFlag: String,
+        nationalRating: Int
+    ) {
+        val updatedProfile = userProfile.value.copy(
+            managerName = managerName,
+            managerNationality = managerNationality,
+            managerFlag = managerFlag,
+            managerArchetype = managerArchetype,
+            region = region,
+            leagueName = league,
+            clubName = clubName,
+            clubBadgeColor = clubBadgeColor,
+            transferBudgetMillions = transferBudget,
+            clubStadium = stadium,
+            nationalTeam = nationalTeam,
+            nationalTeamFlag = nationalFlag,
+            nationalTeamRating = nationalRating,
+            eloRating = 1450,
+            careerWins = 0,
+            careerDraws = 0,
+            careerLosses = 0,
+            totalTrophies = 0
+        )
+        repository.updateUserProfile(updatedProfile)
+        _appPhase.value = AppPhase.MAIN_CAREER
+        _currentTab.value = ActiveScreenTab.MAIN_HUB
     }
 
     fun createNewCareer(
@@ -782,19 +837,19 @@ class FmSimViewModel(
         )
         repository.updateUserProfile(updatedProfile)
         _appPhase.value = AppPhase.MAIN_CAREER
-        _currentTab.value = ActiveScreenTab.TACTICS_SQUAD
+        _currentTab.value = ActiveScreenTab.MAIN_HUB
     }
 
     fun logout() {
         matchSimulationJob?.cancel()
         _liveMatch.value = null
-        _appPhase.value = AppPhase.SPLASH_PROFILE_MENU
+        _appPhase.value = AppPhase.PROFILE_MENU
     }
 
     fun returnToHomeAfterMatch() {
         matchSimulationJob?.cancel()
         _liveMatch.value = null
-        _currentTab.value = ActiveScreenTab.TACTICS_SQUAD
+        _currentTab.value = ActiveScreenTab.MAIN_HUB
     }
 
     override fun onCleared() {

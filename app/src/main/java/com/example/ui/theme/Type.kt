@@ -12,80 +12,69 @@ val Typography = Typography(
         fontWeight = FontWeight.Black,
         fontSize = 28.sp,
         lineHeight = 32.sp,
-        letterSpacing = (-0.5).sp,
-        color = TextPrimary
+        letterSpacing = (-0.5).sp
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
-        lineHeight = 26.sp,
-        color = TextPrimary
+        lineHeight = 26.sp
     ),
     titleLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        lineHeight = 22.sp,
-        color = TextPrimary
+        lineHeight = 22.sp
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.SemiBold,
         fontSize = 15.sp,
-        lineHeight = 18.sp,
-        color = TextPrimary
+        lineHeight = 18.sp
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Medium,
         fontSize = 13.sp,
-        lineHeight = 16.sp,
-        color = TextPrimary
+        lineHeight = 16.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 18.sp,
-        color = TextPrimary
+        lineHeight = 18.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
-        lineHeight = 16.sp,
-        color = TextSecondary
+        lineHeight = 16.sp
     ),
     bodySmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Medium,
         fontSize = 10.sp,
-        lineHeight = 13.sp,
-        color = TextMuted
+        lineHeight = 13.sp
     ),
     labelLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         lineHeight = 14.sp,
-        letterSpacing = 0.5.sp,
-        color = TextPrimary
+        letterSpacing = 0.5.sp
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.SemiBold,
         fontSize = 10.sp,
         lineHeight = 12.sp,
-        letterSpacing = 0.5.sp,
-        color = TextSecondary
+        letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 9.sp,
         lineHeight = 11.sp,
-        letterSpacing = 0.5.sp,
-        color = TextMuted
+        letterSpacing = 0.5.sp
     )
 )

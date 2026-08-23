@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.*
@@ -20,9 +23,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.Settings
 import com.example.model.OpponentClub
 import com.example.model.UserProfile
 import com.example.ui.theme.*
@@ -39,32 +42,34 @@ fun GameTopBar(
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
     var isMuted by remember { mutableStateOf(AudioEffectManager.isMuted) }
+    val colors = AppTheme.colors
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(44.dp),
+            .height(48.dp),
         color = StadiumSurface,
         border = androidx.compose.foundation.BorderStroke(1.dp, StadiumBorder)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 10.dp),
+                .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             // Club & Manager Identification
             Row(
+                modifier = Modifier.weight(1f, fill = false),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(26.dp)
                         .clip(CircleShape)
-                        .background(NaturalForest)
-                        .border(1.dp, NaturalForestLight, CircleShape),
+                        .background(colors.primaryAccent)
+                        .border(1.dp, colors.secondaryAccent, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -73,7 +78,7 @@ fun GameTopBar(
                     )
                 }
 
-                Column {
+                Column(modifier = Modifier.widthIn(max = 180.dp)) {
                     Text(
                         text = userProfile.clubName,
                         style = MaterialTheme.typography.titleMedium.copy(
@@ -81,51 +86,47 @@ fun GameTopBar(
                             fontSize = 12.sp,
                             color = TextPrimary
                         ),
-                        maxLines = 1
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "${userProfile.managerName} • Rating: ${userProfile.eloRating} ELO",
+                        text = "${userProfile.managerName} • ${userProfile.eloRating} ELO",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontSize = 9.sp,
-                            color = NaturalForest
-                        )
+                            color = colors.primaryAccent
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
-            // Financial & Budget Badges
+            // Right Status, Theme, Sound & Actions
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 // Transfer Budget
                 BadgePill(
                     label = "BUDGET",
                     value = "$${String.format("%.1f", userProfile.transferBudgetMillions)}M",
-                    valueColor = NaturalForest
+                    valueColor = colors.primaryAccent
                 )
 
-                // Weekly Wage Cap
-                BadgePill(
-                    label = "WAGES",
-                    value = "$${userProfile.currentWeeklyWageExpenseThousands}k/wk",
-                    valueColor = NaturalEarthAmber
-                )
-
-                // Settings Modal Button
+                // Theme Switcher Toggle (Light / Dark Mode)
                 IconButton(
                     onClick = {
                         HapticController.performTactileClick(haptic, context)
-                        onOpenSettings()
+                        ThemeManager.toggleLightDark()
                     },
                     modifier = Modifier
-                        .size(28.dp)
-                        .testTag("topbar_settings_btn")
+                        .size(30.dp)
+                        .testTag("topbar_theme_toggle_btn")
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
-                        tint = TextSecondary,
+                        imageVector = if (colors.isDark) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                        contentDescription = "Toggle Light/Dark Theme",
+                        tint = if (colors.isDark) colors.gold else colors.primaryAccent,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -135,12 +136,30 @@ fun GameTopBar(
                     onClick = {
                         isMuted = AudioEffectManager.toggleMute()
                     },
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(30.dp)
                 ) {
                     Icon(
                         imageVector = if (isMuted) Icons.Filled.VolumeMute else Icons.Filled.VolumeUp,
                         contentDescription = "Toggle Audio",
-                        tint = if (isMuted) TextSecondary else NaturalForest,
+                        tint = if (isMuted) TextMuted else colors.primaryAccent,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
+                // Settings Modal Button
+                IconButton(
+                    onClick = {
+                        HapticController.performTactileClick(haptic, context)
+                        onOpenSettings()
+                    },
+                    modifier = Modifier
+                        .size(30.dp)
+                        .testTag("topbar_settings_btn")
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "Settings",
+                        tint = TextSecondary,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -153,16 +172,16 @@ fun GameTopBar(
                             onQuickSimMatch()
                         },
                         modifier = Modifier
-                            .height(28.dp)
+                            .height(30.dp)
                             .testTag("topbar_quick_match_btn"),
-                        colors = ButtonDefaults.buttonColors(containerColor = NaturalForest),
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.primaryAccent),
                         shape = RoundedCornerShape(6.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = if (colors.isDark) Color.Black else Color.White,
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
@@ -171,7 +190,7 @@ fun GameTopBar(
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 10.sp,
-                                color = Color.White
+                                color = if (colors.isDark) Color.Black else Color.White
                             )
                         )
                     }
@@ -188,12 +207,16 @@ private fun BadgePill(
     valueColor: Color
 ) {
     Surface(
+        modifier = Modifier
+            .height(26.dp)
+            .clip(RoundedCornerShape(6.dp)),
         color = StadiumSurfaceVariant,
-        shape = RoundedCornerShape(4.dp),
-        border = androidx.compose.foundation.BorderStroke(0.5.dp, StadiumBorder)
+        border = androidx.compose.foundation.BorderStroke(1.dp, StadiumBorder)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -201,16 +224,16 @@ private fun BadgePill(
                 text = label,
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontSize = 8.sp,
-                    color = TextSecondary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = TextSecondary
                 )
             )
             Text(
                 text = value,
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontSize = 9.sp,
-                    color = valueColor,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    color = valueColor
                 )
             )
         }

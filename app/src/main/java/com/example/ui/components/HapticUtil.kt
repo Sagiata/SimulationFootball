@@ -17,6 +17,17 @@ object HapticController {
         triggerVibration(context, 15, 60)
     }
 
+    fun triggerClick(haptic: HapticFeedback?, context: Context? = null) {
+        performTactileClick(haptic, context)
+    }
+
+    fun triggerImpact(haptic: HapticFeedback?, context: Context? = null) {
+        try {
+            haptic?.performHapticFeedback(HapticFeedbackType.LongPress)
+        } catch (_: Exception) {}
+        triggerVibration(context, 35, 180)
+    }
+
     fun performSquadSwapSuccess(haptic: HapticFeedback?, context: Context? = null) {
         try {
             haptic?.performHapticFeedback(HapticFeedbackType.LongPress)

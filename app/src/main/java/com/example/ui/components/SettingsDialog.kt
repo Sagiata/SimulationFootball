@@ -40,6 +40,8 @@ fun SettingsDialog(
     val context = LocalContext.current
     var isMuted by remember { mutableStateOf(AudioEffectManager.isMuted) }
     var showLogoutConfirm by remember { mutableStateOf(false) }
+    val themeMode by ThemeManager.themeMode.collectAsState()
+    val colors = AppTheme.colors
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -57,7 +59,7 @@ fun SettingsDialog(
                     Icon(
                         imageVector = Icons.Filled.Settings,
                         contentDescription = null,
-                        tint = NaturalForest,
+                        tint = colors.primaryAccent,
                         modifier = Modifier.size(22.dp)
                     )
                     Text(
@@ -96,25 +98,30 @@ fun SettingsDialog(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(NaturalForest),
+                                    .background(colors.primaryAccent),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("⚽", fontSize = 16.sp)
+                                Text(
+                                    text = userProfile.managerName.take(2).uppercase(),
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        color = if (colors.isDark) Color.Black else Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
                             }
                             Column {
                                 Text(
                                     text = userProfile.managerName,
                                     style = MaterialTheme.typography.titleSmall.copy(
                                         fontWeight = FontWeight.Bold,
-                                        color = TextPrimary,
-                                        fontSize = 12.sp
+                                        color = TextPrimary
                                     )
                                 )
                                 Text(
-                                    text = "${userProfile.clubName} • ${userProfile.region} • ${userProfile.eloRating} ELO",
+                                    text = "${userProfile.clubName} • ${userProfile.region}",
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         color = TextSecondary,
-                                        fontSize = 9.sp
+                                        fontSize = 10.sp
                                     )
                                 )
                             }
@@ -122,19 +129,99 @@ fun SettingsDialog(
                     }
                 }
 
-                // Section 2: Multi-Language Selector (6 languages requested)
+                // Section 2: Theme Selector (Dark Mode & Light Mode)
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Icon(Icons.Filled.Translate, contentDescription = null, tint = NaturalForest, modifier = Modifier.size(16.dp))
+                            Icon(
+                                imageVector = if (colors.isDark) Icons.Filled.DarkMode else Icons.Filled.LightMode,
+                                contentDescription = null,
+                                tint = colors.primaryAccent,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "THEME & DISPLAY MODE",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.primaryAccent,
+                                    fontSize = 11.sp
+                                )
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            AppThemeMode.entries.forEach { mode ->
+                                val isSelected = themeMode == mode
+                                val icon = when (mode) {
+                                    AppThemeMode.SYSTEM -> Icons.Filled.PhoneAndroid
+                                    AppThemeMode.LIGHT -> Icons.Filled.LightMode
+                                    AppThemeMode.DARK -> Icons.Filled.DarkMode
+                                }
+                                Surface(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(40.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            HapticController.performTactileClick(haptic, context)
+                                            ThemeManager.setThemeMode(mode)
+                                        },
+                                    color = if (isSelected) colors.primaryAccent.copy(alpha = 0.2f) else StadiumSurfaceVariant,
+                                    shape = RoundedCornerShape(8.dp),
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        if (isSelected) colors.primaryAccent else StadiumBorder
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 6.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null,
+                                            tint = if (isSelected) colors.primaryAccent else TextSecondary,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = mode.title,
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                                color = if (isSelected) colors.primaryAccent else TextPrimary,
+                                                fontSize = 9.5.sp
+                                            ),
+                                            maxLines = 1
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Section 3: Multi-Language Selector (6 languages requested)
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(Icons.Filled.Translate, contentDescription = null, tint = colors.primaryAccent, modifier = Modifier.size(16.dp))
                             Text(
                                 text = LocalizationManager.getString("select_language", currentLanguage),
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = NaturalForest,
+                                    color = colors.primaryAccent,
                                     fontSize = 11.sp
                                 )
                             )
@@ -160,11 +247,11 @@ fun SettingsDialog(
                                                 onLanguageSelected(lang)
                                             }
                                             .testTag("lang_btn_${lang.code}"),
-                                        color = if (isSelected) NaturalForest.copy(alpha = 0.2f) else StadiumSurfaceVariant,
+                                        color = if (isSelected) colors.primaryAccent.copy(alpha = 0.2f) else StadiumSurfaceVariant,
                                         shape = RoundedCornerShape(8.dp),
                                         border = androidx.compose.foundation.BorderStroke(
                                             1.dp,
-                                            if (isSelected) NaturalForest else StadiumBorder
+                                            if (isSelected) colors.primaryAccent else StadiumBorder
                                         )
                                     ) {
                                         Row(
@@ -180,7 +267,7 @@ fun SettingsDialog(
                                                     text = lang.nativeName,
                                                     style = MaterialTheme.typography.labelSmall.copy(
                                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                                        color = if (isSelected) NaturalForest else TextPrimary,
+                                                        color = if (isSelected) colors.primaryAccent else TextPrimary,
                                                         fontSize = 9.sp
                                                     ),
                                                     maxLines = 1
@@ -202,7 +289,7 @@ fun SettingsDialog(
                     }
                 }
 
-                // Section 3: Audio & Haptic Controls
+                // Section 4: Audio & Haptic Controls
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
@@ -227,7 +314,7 @@ fun SettingsDialog(
                                 Icon(
                                     imageVector = if (isMuted) Icons.Filled.VolumeMute else Icons.Filled.VolumeUp,
                                     contentDescription = null,
-                                    tint = NaturalForest,
+                                    tint = colors.primaryAccent,
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
@@ -244,8 +331,8 @@ fun SettingsDialog(
                                     isMuted = AudioEffectManager.toggleMute()
                                 },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = NaturalForest
+                                    checkedThumbColor = if (colors.isDark) Color.Black else Color.White,
+                                    checkedTrackColor = colors.primaryAccent
                                 )
                             )
                         }
@@ -263,7 +350,7 @@ fun SettingsDialog(
                                 Icon(
                                     imageVector = Icons.Filled.Vibration,
                                     contentDescription = null,
-                                    tint = NaturalEarthAmber,
+                                    tint = colors.amber,
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
@@ -278,15 +365,15 @@ fun SettingsDialog(
                                 checked = true,
                                 onCheckedChange = { },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = NaturalForest
+                                    checkedThumbColor = if (colors.isDark) Color.Black else Color.White,
+                                    checkedTrackColor = colors.primaryAccent
                                 )
                             )
                         }
                     }
                 }
 
-                // Section 4: LOGOUT BUTTON (Returns to Profile Menu)
+                // Section 5: LOGOUT BUTTON (Returns to Profile Menu)
                 item {
                     Spacer(modifier = Modifier.height(4.dp))
                     Button(
@@ -298,21 +385,16 @@ fun SettingsDialog(
                             .fillMaxWidth()
                             .height(42.dp)
                             .testTag("btn_logout_settings"),
-                        colors = ButtonDefaults.buttonColors(containerColor = NaturalTerracotta),
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.red),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Logout,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
+                        Icon(Icons.Filled.ExitToApp, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = LocalizationManager.getString("logout", currentLanguage),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelMedium.copy(
                                 color = Color.White,
+                                fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
                             )
                         )
@@ -320,13 +402,13 @@ fun SettingsDialog(
                 }
             }
         },
-        confirmButton = {
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = NaturalForest),
-                shape = RoundedCornerShape(6.dp)
-            ) {
-                Text("OK", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = LocalizationManager.getString("cancel", currentLanguage),
+                    style = MaterialTheme.typography.labelMedium.copy(color = colors.primaryAccent)
+                )
             }
         }
     )
@@ -336,43 +418,31 @@ fun SettingsDialog(
         AlertDialog(
             onDismissRequest = { showLogoutConfirm = false },
             title = {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.Logout, contentDescription = null, tint = NaturalTerracotta)
-                    Text(
-                        text = LocalizationManager.getString("logout", currentLanguage),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                }
+                Text(
+                    text = LocalizationManager.getString("logout", currentLanguage),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
             },
             text = {
                 Text(
                     text = LocalizationManager.getString("confirm_logout", currentLanguage),
-                    fontSize = 11.sp,
-                    color = TextPrimary
+                    style = MaterialTheme.typography.bodyMedium.copy(color = TextPrimary)
                 )
             },
             confirmButton = {
                 Button(
                     onClick = {
                         showLogoutConfirm = false
-                        onDismiss()
                         onLogout()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NaturalTerracotta),
-                    modifier = Modifier.testTag("btn_confirm_logout")
+                    colors = ButtonDefaults.buttonColors(containerColor = colors.red)
                 ) {
-                    Text(
-                        text = LocalizationManager.getString("logout", currentLanguage),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        color = Color.White
-                    )
+                    Text(LocalizationManager.getString("logout", currentLanguage), color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutConfirm = false }) {
-                    Text(LocalizationManager.getString("cancel", currentLanguage), color = TextSecondary, fontSize = 11.sp)
+                    Text(LocalizationManager.getString("cancel", currentLanguage), color = colors.primaryAccent)
                 }
             }
         )

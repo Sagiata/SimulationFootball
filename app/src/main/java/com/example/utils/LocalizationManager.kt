@@ -41,6 +41,7 @@ object LocalizationManager {
 
     private val englishStrings = mapOf(
         // Navigation & General
+        "nav_hub" to "Hub",
         "nav_tactics" to "Tactics",
         "nav_match" to "Match",
         "nav_training" to "Training",
@@ -122,6 +123,7 @@ object LocalizationManager {
 
     private val indonesianStrings = mapOf(
         // Navigation & General
+        "nav_hub" to "Hub",
         "nav_tactics" to "Taktik",
         "nav_match" to "Tanding",
         "nav_training" to "Latihan",

@@ -8,30 +8,47 @@ import com.example.model.PlayerRole
 import com.example.model.PlayerSeasonStats
 import com.example.model.TrainingFocus
 
+/**
+ * Room Entity representing a football player with simulation statistics, attributes,
+ * and contract information.
+ *
+ * Core simulation attributes:
+ * - [name]: Player's display name
+ * - [speed]: Sprint speed and pace rating (0-99)
+ * - [passing]: Vision, short/long passing accuracy (0-99)
+ * - [shooting]: Finishing, shot power, and composure (0-99)
+ * - [stamina]: Current physical match energy and stamina level (0-100)
+ * - [overallRating]: Composite player ability rating (0-99)
+ */
 @Entity(tableName = "players")
 data class PlayerEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey 
+    val id: String,
     val name: String,
-    val number: Int,
-    val primaryRole: PlayerRole,
-    val secondaryRoles: List<PlayerRole> = emptyList(),
-    val overallRating: Int,
-    val potentialRating: Int,
-    val age: Int,
-    val nationality: String,
-    val flagEmoji: String,
-    // Attributes
-    val pace: Int,
-    val shooting: Int,
+    val speed: Int,
     val passing: Int,
-    val dribbling: Int,
-    val defending: Int,
-    val physicality: Int,
-    val tacticalIq: Int,
-    // Dynamic Match State
+    val shooting: Int,
     val stamina: Int = 100,
+    val overallRating: Int,
+
+    // Additional tactical, profile, and simulation attributes
+    val number: Int = 10,
+    val primaryRole: PlayerRole = PlayerRole.CM,
+    val secondaryRoles: List<PlayerRole> = emptyList(),
+    val potentialRating: Int = 82,
+    val age: Int = 24,
+    val nationality: String = "Global",
+    val flagEmoji: String = "⚽",
+    val pace: Int = speed,
+    val dribbling: Int = 72,
+    val defending: Int = 65,
+    val physicality: Int = 70,
+    val tacticalIq: Int = 72,
+
+    // Dynamic Match State
     val morale: Int = 95,
     val condition: String = "Match Fit",
+
     // Season Statistics
     val appearances: Int = 0,
     val goals: Int = 0,
@@ -44,9 +61,10 @@ data class PlayerEntity(
     val minutesPlayed: Int = 0,
     val yellowCards: Int = 0,
     val redCards: Int = 0,
+
     // Contract & Financials
-    val marketValueMillions: Double,
-    val weeklyWageThousands: Int,
+    val marketValueMillions: Double = 15.0,
+    val weeklyWageThousands: Int = 45,
     val isStarter: Boolean = false,
     val starterSlotIndex: Int = -1,
     val isCaptain: Boolean = false,
@@ -59,6 +77,7 @@ data class PlayerEntity(
     val trainingFocus: TrainingFocus = TrainingFocus.BALANCED,
     val trainingProgressPct: Int = 35,
     val isYouthProspect: Boolean = false,
+    val imageUrl: String = "",
     val formHistory: List<Float> = listOf(7.2f, 6.8f, 7.5f, 8.0f, 7.4f)
 ) {
     fun toDomain(): Player = Player(
@@ -73,7 +92,7 @@ data class PlayerEntity(
         nationality = nationality,
         flagEmoji = flagEmoji,
         attributes = PlayerAttributes(
-            pace = pace,
+            pace = speed.takeIf { it > 0 } ?: pace,
             shooting = shooting,
             passing = passing,
             dribbling = dribbling,
@@ -111,6 +130,7 @@ data class PlayerEntity(
         trainingFocus = trainingFocus,
         trainingProgressPct = trainingProgressPct,
         isYouthProspect = isYouthProspect,
+        imageUrl = imageUrl,
         formHistory = formHistory
     )
 
@@ -118,22 +138,23 @@ data class PlayerEntity(
         fun fromDomain(player: Player): PlayerEntity = PlayerEntity(
             id = player.id,
             name = player.name,
+            speed = player.attributes.speed,
+            passing = player.attributes.passing,
+            shooting = player.attributes.shooting,
+            stamina = player.stamina,
+            overallRating = player.overallRating,
             number = player.number,
             primaryRole = player.primaryRole,
             secondaryRoles = player.secondaryRoles,
-            overallRating = player.overallRating,
             potentialRating = player.potentialRating,
             age = player.age,
             nationality = player.nationality,
             flagEmoji = player.flagEmoji,
             pace = player.attributes.pace,
-            shooting = player.attributes.shooting,
-            passing = player.attributes.passing,
             dribbling = player.attributes.dribbling,
             defending = player.attributes.defending,
             physicality = player.attributes.physicality,
             tacticalIq = player.attributes.tacticalIq,
-            stamina = player.stamina,
             morale = player.morale,
             condition = player.condition,
             appearances = player.seasonStats.appearances,
@@ -161,6 +182,7 @@ data class PlayerEntity(
             trainingFocus = player.trainingFocus,
             trainingProgressPct = player.trainingProgressPct,
             isYouthProspect = player.isYouthProspect,
+            imageUrl = player.imageUrl,
             formHistory = player.formHistory
         )
     }

@@ -39,7 +39,9 @@ data class PlayerAttributes(
     val defending: Int,
     val physicality: Int,
     val tacticalIq: Int
-)
+) {
+    val speed: Int get() = pace
+}
 
 data class PlayerSeasonStats(
     val appearances: Int = 0,
@@ -85,6 +87,7 @@ data class Player(
     val trainingFocus: TrainingFocus = TrainingFocus.BALANCED,
     val trainingProgressPct: Int = 35,
     val isYouthProspect: Boolean = false,
+    val imageUrl: String = "",
     val formHistory: List<Float> = listOf(7.2f, 6.8f, 7.5f, 8.0f, 7.4f)
 )
 

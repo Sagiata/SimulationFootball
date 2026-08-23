@@ -43,12 +43,22 @@ data class CalendarDayModel(
     val eventDescription: String = "Squad Tactical Training"
 )
 
-enum class CalendarEventType(val label: String, val icon: ImageVector, val color: Color) {
-    MATCH("Matchday", Icons.Filled.SportsSoccer, NaturalForest),
-    TRAINING("Training", Icons.Filled.FitnessCenter, NaturalForestLight),
-    PRESS("Press Conf", Icons.Filled.Mic, NaturalEarthAmber),
-    REST("Rest Day", Icons.Filled.Hotel, TextSecondary),
-    DEADLINE("Transfer Deadline", Icons.Filled.Timer, NaturalTerracotta)
+enum class CalendarEventType(val label: String, val icon: ImageVector) {
+    MATCH("Matchday", Icons.Filled.SportsSoccer),
+    TRAINING("Training", Icons.Filled.FitnessCenter),
+    PRESS("Press Conf", Icons.Filled.Mic),
+    REST("Rest Day", Icons.Filled.Hotel),
+    DEADLINE("Transfer Deadline", Icons.Filled.Timer);
+
+    val color: Color
+        @Composable
+        get() = when (this) {
+            MATCH -> AppTheme.colors.primaryAccent
+            TRAINING -> AppTheme.colors.secondaryAccent
+            PRESS -> AppTheme.colors.amber
+            REST -> AppTheme.colors.textSecondary
+            DEADLINE -> AppTheme.colors.red
+        }
 }
 
 @Composable
