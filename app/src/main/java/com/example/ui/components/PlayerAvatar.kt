@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,11 +19,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.example.model.Player
 import com.example.model.PlayerRole
 import com.example.ui.theme.*
@@ -37,9 +42,9 @@ enum class AvatarSize(val dp: Dp, val fontSize: Int, val badgeSize: Dp) {
 }
 
 /**
- * Modern procedural Football Player Avatar component that renders custom faces,
- * realistic hair styles, skin tones, kit jerseys, player numbers, nationality flags,
- * and overall rating badges.
+ * Modern Football Player Avatar component that renders real player face photos via Coil
+ * from 13299.json asset database, with automatic procedural fallback, kit jerseys,
+ * player numbers, nationality flags, and overall rating badges.
  */
 @Composable
 fun PlayerAvatar(
@@ -56,6 +61,7 @@ fun PlayerAvatar(
         role = player.primaryRole,
         flagEmoji = player.flagEmoji,
         number = player.number,
+        imageUrl = player.imageUrl,
         seed = player.id.hashCode(),
         size = size,
         showRatingBadge = showRatingBadge,
@@ -72,6 +78,7 @@ fun PlayerAvatarVisual(
     role: PlayerRole = PlayerRole.CM,
     flagEmoji: String = "⚽",
     number: Int = 10,
+    imageUrl: String? = null,
     seed: Int = name.hashCode(),
     modifier: Modifier = Modifier,
     size: AvatarSize = AvatarSize.MEDIUM,
@@ -141,7 +148,7 @@ fun PlayerAvatarVisual(
             .testTag("player_avatar_${name.replace(" ", "_")}"),
         contentAlignment = Alignment.Center
     ) {
-        // Outer avatar circle with gradient background and face canvas
+        // Outer avatar circle with image / gradient background and face canvas
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -164,99 +171,153 @@ fun PlayerAvatarVisual(
                         )
                     ),
                     shape = CircleShape
-                )
+                ),
+            contentAlignment = Alignment.Center
         ) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                val w = this.size.width
-                val h = this.size.height
+            if (!imageUrl.isNullOrBlank()) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape),
+                    loading = {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(size.dp * 0.35f),
+                                color = ratingGlowColor,
+                                strokeWidth = 1.5.dp
+                            )
+                        }
+                    },
+                    error = {
+                        Canvas(modifier = Modifier.fillMaxSize()) {
+                            val w = this.size.width
+                            val h = this.size.height
 
-                // 1. Draw Player Jersey / Torso
-                drawJersey(
-                    w = w,
-                    h = h,
-                    kitColor1 = kitColorPair.first,
-                    kitColor2 = kitColorPair.second,
-                    skinColor = skinColor
+                            drawJersey(w, h, kitColorPair.first, kitColorPair.second, skinColor)
+                            val neckW = w * 0.24f
+                            val neckH = h * 0.22f
+                            drawRect(skinShadow, Offset((w - neckW) / 2f, h * 0.52f), Size(neckW, neckH))
+                            val faceW = w * 0.46f
+                            val faceH = h * 0.50f
+                            val faceTop = h * 0.16f
+                            val faceLeft = (w - faceW) / 2f
+                            drawOval(skinColor, Offset(faceLeft, faceTop), Size(faceW, faceH))
+                            val earR = w * 0.08f
+                            drawOval(skinShadow, Offset(faceLeft - earR * 0.45f, faceTop + faceH * 0.35f), Size(earR, earR * 1.3f))
+                            drawOval(skinShadow, Offset(faceLeft + faceW - earR * 0.55f, faceTop + faceH * 0.35f), Size(earR, earR * 1.3f))
+                            val eyeW = w * 0.07f
+                            val eyeY = faceTop + faceH * 0.42f
+                            drawOval(Color(0xFF1E1E1E), Offset(faceLeft + faceW * 0.20f, eyeY), Size(eyeW, eyeW * 0.8f))
+                            drawOval(Color(0xFF1E1E1E), Offset(faceLeft + faceW * 0.60f, eyeY), Size(eyeW, eyeW * 0.8f))
+                            drawCircle(skinShadow, w * 0.035f, Offset(w * 0.50f, faceTop + faceH * 0.58f))
+                            val smilePath = Path().apply {
+                                moveTo(faceLeft + faceW * 0.30f, faceTop + faceH * 0.74f)
+                                quadraticBezierTo(w * 0.50f, faceTop + faceH * 0.84f, faceLeft + faceW * 0.70f, faceTop + faceH * 0.74f)
+                            }
+                            drawPath(smilePath, color = skinShadow)
+                            drawHair(w, h, faceLeft, faceTop, faceW, hairColor, hairStyleIndex)
+                        }
+                    }
                 )
+            } else {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    val w = this.size.width
+                    val h = this.size.height
 
-                // 2. Draw Neck
-                val neckW = w * 0.24f
-                val neckH = h * 0.22f
-                drawRect(
-                    color = skinShadow,
-                    topLeft = Offset((w - neckW) / 2f, h * 0.52f),
-                    size = Size(neckW, neckH)
-                )
+                    // 1. Draw Player Jersey / Torso
+                    drawJersey(
+                        w = w,
+                        h = h,
+                        kitColor1 = kitColorPair.first,
+                        kitColor2 = kitColorPair.second,
+                        skinColor = skinColor
+                    )
 
-                // 3. Draw Head / Face Base
-                val faceW = w * 0.46f
-                val faceH = h * 0.50f
-                val faceTop = h * 0.16f
-                val faceLeft = (w - faceW) / 2f
+                    // 2. Draw Neck
+                    val neckW = w * 0.24f
+                    val neckH = h * 0.22f
+                    drawRect(
+                        color = skinShadow,
+                        topLeft = Offset((w - neckW) / 2f, h * 0.52f),
+                        size = Size(neckW, neckH)
+                    )
 
-                // Face shadow & base
-                drawOval(
-                    color = skinColor,
-                    topLeft = Offset(faceLeft, faceTop),
-                    size = Size(faceW, faceH)
-                )
+                    // 3. Draw Head / Face Base
+                    val faceW = w * 0.46f
+                    val faceH = h * 0.50f
+                    val faceTop = h * 0.16f
+                    val faceLeft = (w - faceW) / 2f
 
-                // Ears
-                val earR = w * 0.08f
-                drawOval(
-                    color = skinShadow,
-                    topLeft = Offset(faceLeft - earR * 0.45f, faceTop + faceH * 0.35f),
-                    size = Size(earR, earR * 1.3f)
-                )
-                drawOval(
-                    color = skinShadow,
-                    topLeft = Offset(faceLeft + faceW - earR * 0.55f, faceTop + faceH * 0.35f),
-                    size = Size(earR, earR * 1.3f)
-                )
+                    // Face shadow & base
+                    drawOval(
+                        color = skinColor,
+                        topLeft = Offset(faceLeft, faceTop),
+                        size = Size(faceW, faceH)
+                    )
 
-                // Eyes & Eyebrows
-                val eyeW = w * 0.07f
-                val eyeY = faceTop + faceH * 0.42f
-                drawOval(
-                    color = Color(0xFF1E1E1E),
-                    topLeft = Offset(faceLeft + faceW * 0.20f, eyeY),
-                    size = Size(eyeW, eyeW * 0.8f)
-                )
-                drawOval(
-                    color = Color(0xFF1E1E1E),
-                    topLeft = Offset(faceLeft + faceW * 0.60f, eyeY),
-                    size = Size(eyeW, eyeW * 0.8f)
-                )
+                    // Ears
+                    val earR = w * 0.08f
+                    drawOval(
+                        color = skinShadow,
+                        topLeft = Offset(faceLeft - earR * 0.45f, faceTop + faceH * 0.35f),
+                        size = Size(earR, earR * 1.3f)
+                    )
+                    drawOval(
+                        color = skinShadow,
+                        topLeft = Offset(faceLeft + faceW - earR * 0.55f, faceTop + faceH * 0.35f),
+                        size = Size(earR, earR * 1.3f)
+                    )
 
-                // Nose
-                drawCircle(
-                    color = skinShadow,
-                    radius = w * 0.035f,
-                    center = Offset(w * 0.50f, faceTop + faceH * 0.58f)
-                )
+                    // Eyes & Eyebrows
+                    val eyeW = w * 0.07f
+                    val eyeY = faceTop + faceH * 0.42f
+                    drawOval(
+                        color = Color(0xFF1E1E1E),
+                        topLeft = Offset(faceLeft + faceW * 0.20f, eyeY),
+                        size = Size(eyeW, eyeW * 0.8f)
+                    )
+                    drawOval(
+                        color = Color(0xFF1E1E1E),
+                        topLeft = Offset(faceLeft + faceW * 0.60f, eyeY),
+                        size = Size(eyeW, eyeW * 0.8f)
+                    )
 
-                // Mouth / Confident Smile
-                val smilePath = Path().apply {
-                    moveTo(faceLeft + faceW * 0.30f, faceTop + faceH * 0.74f)
-                    quadraticBezierTo(
-                        w * 0.50f,
-                        faceTop + faceH * 0.84f,
-                        faceLeft + faceW * 0.70f,
-                        faceTop + faceH * 0.74f
+                    // Nose
+                    drawCircle(
+                        color = skinShadow,
+                        radius = w * 0.035f,
+                        center = Offset(w * 0.50f, faceTop + faceH * 0.58f)
+                    )
+
+                    // Mouth / Confident Smile
+                    val smilePath = Path().apply {
+                        moveTo(faceLeft + faceW * 0.30f, faceTop + faceH * 0.74f)
+                        quadraticBezierTo(
+                            w * 0.50f,
+                            faceTop + faceH * 0.84f,
+                            faceLeft + faceW * 0.70f,
+                            faceTop + faceH * 0.74f
+                        )
+                    }
+                    drawPath(smilePath, color = skinShadow)
+
+                    // 4. Draw Hair Style
+                    drawHair(
+                        w = w,
+                        h = h,
+                        faceLeft = faceLeft,
+                        faceTop = faceTop,
+                        faceW = faceW,
+                        hairColor = hairColor,
+                        styleIndex = hairStyleIndex
                     )
                 }
-                drawPath(smilePath, color = skinShadow)
-
-                // 4. Draw Hair Style
-                drawHair(
-                    w = w,
-                    h = h,
-                    faceLeft = faceLeft,
-                    faceTop = faceTop,
-                    faceW = faceW,
-                    hairColor = hairColor,
-                    styleIndex = hairStyleIndex
-                )
             }
         }
 

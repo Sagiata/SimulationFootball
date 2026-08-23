@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,11 +23,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import kotlin.math.abs
 
 enum class CrestSize(val dp: Dp, val fontSize: Int, val starSize: Dp) {
@@ -37,7 +43,8 @@ enum class CrestSize(val dp: Dp, val fontSize: Int, val starSize: Dp) {
 
 /**
  * Modern dynamic Football Club Crest component.
- * Renders custom shields, badges, stripes, club colors, stars, and monograms.
+ * Renders real club logos from 13299.json using Coil AsyncImage, or renders custom
+ * shields, badges, stripes, club colors, stars, and monograms.
  */
 @Composable
 fun ClubCrest(
@@ -46,6 +53,7 @@ fun ClubCrest(
     secondaryColor: Color = Color(0xFF14241B),
     stars: Int = 3,
     size: CrestSize = CrestSize.MEDIUM,
+    imageUrl: String? = null,
     modifier: Modifier = Modifier
 ) {
     val acronym = when {
@@ -61,6 +69,85 @@ fun ClubCrest(
         modifier = modifier
             .size(size.dp)
             .testTag("club_crest_${clubName.replace(" ", "_")}"),
+        contentAlignment = Alignment.Center
+    ) {
+        if (!imageUrl.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(size.dp * 0.22f))
+                    .background(
+                        Brush.radialGradient(
+                            listOf(
+                                primaryColor.copy(alpha = 0.35f),
+                                Color(0xFF0B140E)
+                            )
+                        )
+                    )
+                    .border(
+                        width = if (size == CrestSize.HERO) 2.5.dp else 1.5.dp,
+                        brush = Brush.sweepGradient(
+                            listOf(primaryColor, secondaryColor, primaryColor)
+                        ),
+                        shape = RoundedCornerShape(size.dp * 0.22f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = clubName,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(size.dp * 0.22f)),
+                    loading = {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(size.dp * 0.35f),
+                                color = primaryColor,
+                                strokeWidth = 1.5.dp
+                            )
+                        }
+                    },
+                    error = {
+                        ProceduralCrestBody(
+                            crestShapeType = crestShapeType,
+                            primaryColor = primaryColor,
+                            secondaryColor = secondaryColor,
+                            acronym = acronym,
+                            stars = stars,
+                            size = size
+                        )
+                    }
+                )
+            }
+        } else {
+            ProceduralCrestBody(
+                crestShapeType = crestShapeType,
+                primaryColor = primaryColor,
+                secondaryColor = secondaryColor,
+                acronym = acronym,
+                stars = stars,
+                size = size
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProceduralCrestBody(
+    crestShapeType: Int,
+    primaryColor: Color,
+    secondaryColor: Color,
+    acronym: String,
+    stars: Int,
+    size: CrestSize
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         when (crestShapeType) {

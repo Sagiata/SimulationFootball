@@ -81,6 +81,7 @@ data class OpponentClub(
     val badgeColorHex: Long,
     val secondaryBadgeColorHex: Long,
     val league: String,
+    val imageUrl: String = "",
     val overallRating: Int,
     val attackRating: Int,
     val midfieldRating: Int,

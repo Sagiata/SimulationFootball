@@ -418,118 +418,107 @@ class FmSimRepository {
     }
 
     private fun generateInitialSquad(): List<Player> {
-        val formationSlots = FormationType.F_433.layoutSlots
         return listOf(
-            // Starting 11 (mapped to slots 0..10)
+            // Starting 11 (mapped to slots 0..10 from 13299.json)
             Player(
-                id = "P1", name = "Thibaut Vance", number = 1, primaryRole = PlayerRole.GK,
-                overallRating = 88, potentialRating = 91, age = 27, nationality = "Belgium", flagEmoji = "🇧🇪",
-                attributes = PlayerAttributes(pace = 65, shooting = 20, passing = 74, dribbling = 55, defending = 89, physicality = 86, tacticalIq = 90),
-                marketValueMillions = 52.0, weeklyWageThousands = 140, isStarter = true, starterSlotIndex = 0, isCaptain = false
+                id = "P01", name = "Thibaut Courtois", number = 1, primaryRole = PlayerRole.GK,
+                overallRating = 90, potentialRating = 91, age = 32, nationality = "Belgium", flagEmoji = "🇧🇪",
+                imageUrl = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 48, shooting = 18, passing = 75, dribbling = 52, defending = 91, physicality = 88, tacticalIq = 92),
+                marketValueMillions = 45.0, weeklyWageThousands = 180, isStarter = true, starterSlotIndex = 0, isCaptain = false
             ),
             Player(
-                id = "P2", name = "Alphonso Drake", number = 3, primaryRole = PlayerRole.LB,
-                overallRating = 85, potentialRating = 90, age = 23, nationality = "Canada", flagEmoji = "🇨🇦",
-                attributes = PlayerAttributes(pace = 95, shooting = 68, passing = 81, dribbling = 87, defending = 79, physicality = 82, tacticalIq = 84),
-                marketValueMillions = 68.0, weeklyWageThousands = 120, isStarter = true, starterSlotIndex = 1
+                id = "P02", name = "Achraf Hakimi", number = 2, primaryRole = PlayerRole.RB,
+                overallRating = 87, potentialRating = 90, age = 25, nationality = "Morocco", flagEmoji = "🇲🇦",
+                imageUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 95, shooting = 76, passing = 82, dribbling = 85, defending = 79, physicality = 80, tacticalIq = 84),
+                marketValueMillions = 68.0, weeklyWageThousands = 140, isStarter = true, starterSlotIndex = 1
             ),
             Player(
-                id = "P3", name = "Ruben Valente", number = 4, primaryRole = PlayerRole.CB,
-                overallRating = 89, potentialRating = 92, age = 26, nationality = "Portugal", flagEmoji = "🇵🇹",
-                attributes = PlayerAttributes(pace = 78, shooting = 45, passing = 83, dribbling = 72, defending = 91, physicality = 88, tacticalIq = 93),
-                marketValueMillions = 82.0, weeklyWageThousands = 180, isStarter = true, starterSlotIndex = 2, isCaptain = true
+                id = "P03", name = "Ruben Dias", number = 3, primaryRole = PlayerRole.CB,
+                overallRating = 89, potentialRating = 91, age = 27, nationality = "Portugal", flagEmoji = "🇵🇹",
+                imageUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 68, shooting = 39, passing = 74, dribbling = 68, defending = 90, physicality = 88, tacticalIq = 91),
+                marketValueMillions = 80.0, weeklyWageThousands = 175, isStarter = true, starterSlotIndex = 2, isCaptain = true
             ),
             Player(
-                id = "P4", name = "Gabriel Silva", number = 5, primaryRole = PlayerRole.CB,
-                overallRating = 86, potentialRating = 89, age = 25, nationality = "Brazil", flagEmoji = "🇧🇷",
-                attributes = PlayerAttributes(pace = 80, shooting = 40, passing = 77, dribbling = 68, defending = 87, physicality = 89, tacticalIq = 86),
-                marketValueMillions = 55.0, weeklyWageThousands = 110, isStarter = true, starterSlotIndex = 3
+                id = "P04", name = "William Saliba", number = 4, primaryRole = PlayerRole.CB,
+                overallRating = 88, potentialRating = 93, age = 23, nationality = "France", flagEmoji = "🇫🇷",
+                imageUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 84, shooting = 30, passing = 78, dribbling = 76, defending = 89, physicality = 85, tacticalIq = 88),
+                marketValueMillions = 82.0, weeklyWageThousands = 160, isStarter = true, starterSlotIndex = 3
             ),
             Player(
-                id = "P5", name = "Trent Alexander", number = 66, primaryRole = PlayerRole.RB,
-                overallRating = 87, potentialRating = 90, age = 25, nationality = "England", flagEmoji = "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-                attributes = PlayerAttributes(pace = 82, shooting = 78, passing = 93, dribbling = 84, defending = 80, physicality = 77, tacticalIq = 91),
-                marketValueMillions = 75.0, weeklyWageThousands = 160, isStarter = true, starterSlotIndex = 4
+                id = "P05", name = "Theo Hernandez", number = 19, primaryRole = PlayerRole.LB,
+                overallRating = 87, potentialRating = 89, age = 26, nationality = "France", flagEmoji = "🇫🇷",
+                imageUrl = "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 93, shooting = 74, passing = 80, dribbling = 84, defending = 80, physicality = 84, tacticalIq = 83),
+                marketValueMillions = 65.0, weeklyWageThousands = 135, isStarter = true, starterSlotIndex = 4
             ),
             Player(
-                id = "P6", name = "Rodri Casemiro", number = 16, primaryRole = PlayerRole.CDM,
-                overallRating = 90, potentialRating = 91, age = 28, nationality = "Spain", flagEmoji = "🇪🇸",
-                attributes = PlayerAttributes(pace = 72, shooting = 79, passing = 91, dribbling = 83, defending = 90, physicality = 88, tacticalIq = 95),
-                marketValueMillions = 95.0, weeklyWageThousands = 210, isStarter = true, starterSlotIndex = 5
+                id = "P06", name = "Rodri Hernandez", number = 16, primaryRole = PlayerRole.CDM,
+                overallRating = 91, potentialRating = 92, age = 28, nationality = "Spain", flagEmoji = "🇪🇸",
+                imageUrl = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 66, shooting = 80, passing = 92, dribbling = 84, defending = 89, physicality = 86, tacticalIq = 96),
+                marketValueMillions = 110.0, weeklyWageThousands = 220, isStarter = true, starterSlotIndex = 5
             ),
             Player(
-                id = "P7", name = "Luka Modrician", number = 10, primaryRole = PlayerRole.CM,
-                overallRating = 88, potentialRating = 88, age = 29, nationality = "Croatia", flagEmoji = "🇭🇷",
-                attributes = PlayerAttributes(pace = 76, shooting = 82, passing = 94, dribbling = 89, defending = 74, physicality = 73, tacticalIq = 96),
-                marketValueMillions = 60.0, weeklyWageThousands = 175, isStarter = true, starterSlotIndex = 6
+                id = "P07", name = "Jude Bellingham", number = 5, primaryRole = PlayerRole.CM,
+                overallRating = 90, potentialRating = 95, age = 21, nationality = "England", flagEmoji = "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+                imageUrl = "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 80, shooting = 86, passing = 88, dribbling = 89, defending = 82, physicality = 85, tacticalIq = 92),
+                marketValueMillions = 150.0, weeklyWageThousands = 250, isStarter = true, starterSlotIndex = 6
             ),
             Player(
-                id = "P8", name = "Jude Bellingham", number = 8, primaryRole = PlayerRole.CAM,
-                overallRating = 91, potentialRating = 96, age = 21, nationality = "England", flagEmoji = "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-                attributes = PlayerAttributes(pace = 84, shooting = 88, passing = 89, dribbling = 90, defending = 80, physicality = 87, tacticalIq = 92),
-                marketValueMillions = 145.0, weeklyWageThousands = 240, isStarter = true, starterSlotIndex = 7
+                id = "P08", name = "Kevin De Bruyne", number = 17, primaryRole = PlayerRole.CAM,
+                overallRating = 91, potentialRating = 91, age = 33, nationality = "Belgium", flagEmoji = "🇧🇪",
+                imageUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 72, shooting = 88, passing = 95, dribbling = 87, defending = 65, physicality = 76, tacticalIq = 97),
+                marketValueMillions = 60.0, weeklyWageThousands = 280, isStarter = true, starterSlotIndex = 7
             ),
             Player(
-                id = "P9", name = "Vinicius Junior", number = 7, primaryRole = PlayerRole.LW,
-                overallRating = 91, potentialRating = 95, age = 24, nationality = "Brazil", flagEmoji = "🇧🇷",
-                attributes = PlayerAttributes(pace = 96, shooting = 87, passing = 84, dribbling = 95, defending = 42, physicality = 76, tacticalIq = 88),
-                marketValueMillions = 150.0, weeklyWageThousands = 250, isStarter = true, starterSlotIndex = 8
+                id = "P09", name = "Bukayo Saka", number = 7, primaryRole = PlayerRole.RW,
+                overallRating = 88, potentialRating = 92, age = 22, nationality = "England", flagEmoji = "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+                imageUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 88, shooting = 84, passing = 85, dribbling = 90, defending = 65, physicality = 76, tacticalIq = 89),
+                marketValueMillions = 120.0, weeklyWageThousands = 190, isStarter = true, starterSlotIndex = 8
             ),
             Player(
-                id = "P10", name = "Erling Haaland", number = 9, primaryRole = PlayerRole.ST,
+                id = "P10", name = "Vinicius Junior", number = 11, primaryRole = PlayerRole.LW,
+                overallRating = 90, potentialRating = 94, age = 24, nationality = "Brazil", flagEmoji = "🇧🇷",
+                imageUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 96, shooting = 85, passing = 82, dribbling = 93, defending = 32, physicality = 72, tacticalIq = 86),
+                marketValueMillions = 145.0, weeklyWageThousands = 230, isStarter = true, starterSlotIndex = 9
+            ),
+            Player(
+                id = "P11", name = "Erling Haaland", number = 9, primaryRole = PlayerRole.ST,
                 overallRating = 92, potentialRating = 95, age = 24, nationality = "Norway", flagEmoji = "🇳🇴",
-                attributes = PlayerAttributes(pace = 91, shooting = 95, passing = 72, dribbling = 82, defending = 45, physicality = 93, tacticalIq = 90),
-                marketValueMillions = 165.0, weeklyWageThousands = 280, isStarter = true, starterSlotIndex = 9
-            ),
-            Player(
-                id = "P11", name = "Bukayo Saka", number = 11, primaryRole = PlayerRole.RW,
-                overallRating = 89, potentialRating = 93, age = 23, nationality = "England", flagEmoji = "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-                attributes = PlayerAttributes(pace = 89, shooting = 85, passing = 86, dribbling = 91, defending = 62, physicality = 78, tacticalIq = 89),
-                marketValueMillions = 110.0, weeklyWageThousands = 190, isStarter = true, starterSlotIndex = 10
+                imageUrl = "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 89, shooting = 94, passing = 70, dribbling = 81, defending = 45, physicality = 90, tacticalIq = 89),
+                marketValueMillions = 180.0, weeklyWageThousands = 320, isStarter = true, starterSlotIndex = 10
             ),
 
             // Substitutes (Bench)
             Player(
-                id = "P12", name = "Diogo Costa", number = 12, primaryRole = PlayerRole.GK,
-                overallRating = 82, potentialRating = 88, age = 24, nationality = "Portugal", flagEmoji = "🇵🇹",
-                attributes = PlayerAttributes(pace = 60, shooting = 15, passing = 72, dribbling = 50, defending = 83, physicality = 80, tacticalIq = 82),
-                marketValueMillions = 32.0, weeklyWageThousands = 65, isStarter = false
+                id = "P12", name = "Jan Oblak", number = 13, primaryRole = PlayerRole.GK,
+                overallRating = 88, potentialRating = 88, age = 31, nationality = "Slovenia", flagEmoji = "🇸🇮",
+                imageUrl = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 50, shooting = 15, passing = 70, dribbling = 48, defending = 89, physicality = 84, tacticalIq = 88),
+                marketValueMillions = 38.0, weeklyWageThousands = 140, isStarter = false
             ),
             Player(
-                id = "P13", name = "William Saliba", number = 2, primaryRole = PlayerRole.CB,
-                overallRating = 85, potentialRating = 91, age = 23, nationality = "France", flagEmoji = "🇫🇷",
-                attributes = PlayerAttributes(pace = 83, shooting = 38, passing = 79, dribbling = 74, defending = 87, physicality = 84, tacticalIq = 87),
-                marketValueMillions = 62.0, weeklyWageThousands = 100, isStarter = false
+                id = "P13", name = "Aurelien Tchouameni", number = 8, primaryRole = PlayerRole.CDM,
+                overallRating = 85, potentialRating = 91, age = 24, nationality = "France", flagEmoji = "🇫🇷",
+                imageUrl = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=256&auto=format&fit=crop&q=80",
+                attributes = PlayerAttributes(pace = 82, shooting = 72, passing = 82, dribbling = 80, defending = 86, physicality = 85, tacticalIq = 87),
+                marketValueMillions = 65.0, weeklyWageThousands = 120, isStarter = false
             ),
             Player(
-                id = "P14", name = "Eduardo Camavinga", number = 14, primaryRole = PlayerRole.CDM,
-                overallRating = 84, potentialRating = 92, age = 21, nationality = "France", flagEmoji = "🇫🇷",
-                attributes = PlayerAttributes(pace = 81, shooting = 72, passing = 85, dribbling = 86, defending = 81, physicality = 83, tacticalIq = 87),
-                marketValueMillions = 70.0, weeklyWageThousands = 115, isStarter = false
-            ),
-            Player(
-                id = "P15", name = "Jamal Musiala", number = 42, primaryRole = PlayerRole.CAM,
+                id = "P14", name = "Jamal Musiala", number = 42, primaryRole = PlayerRole.CAM,
                 overallRating = 87, potentialRating = 94, age = 21, nationality = "Germany", flagEmoji = "🇩🇪",
+                imageUrl = "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=256&auto=format&fit=crop&q=80",
                 attributes = PlayerAttributes(pace = 87, shooting = 82, passing = 86, dribbling = 94, defending = 54, physicality = 68, tacticalIq = 90),
                 marketValueMillions = 98.0, weeklyWageThousands = 150, isStarter = false
-            ),
-            Player(
-                id = "P16", name = "Rafael Leao", number = 17, primaryRole = PlayerRole.LW,
-                overallRating = 86, potentialRating = 90, age = 25, nationality = "Portugal", flagEmoji = "🇵🇹",
-                attributes = PlayerAttributes(pace = 94, shooting = 83, passing = 78, dribbling = 91, defending = 35, physicality = 80, tacticalIq = 81),
-                marketValueMillions = 72.0, weeklyWageThousands = 130, isStarter = false
-            ),
-            Player(
-                id = "P17", name = "Julian Alvarez", number = 19, primaryRole = PlayerRole.ST,
-                overallRating = 85, potentialRating = 91, age = 24, nationality = "Argentina", flagEmoji = "🇦🇷",
-                attributes = PlayerAttributes(pace = 85, shooting = 87, passing = 80, dribbling = 86, defending = 55, physicality = 77, tacticalIq = 88),
-                marketValueMillions = 75.0, weeklyWageThousands = 125, isStarter = false
-            ),
-            Player(
-                id = "P18", name = "Federico Valverde", number = 15, primaryRole = PlayerRole.CM,
-                overallRating = 88, potentialRating = 92, age = 26, nationality = "Uruguay", flagEmoji = "🇺🇾",
-                attributes = PlayerAttributes(pace = 88, shooting = 84, passing = 87, dribbling = 83, defending = 80, physicality = 86, tacticalIq = 89),
-                marketValueMillions = 88.0, weeklyWageThousands = 160, isStarter = false
             )
         )
     }
@@ -967,38 +956,44 @@ class FmSimRepository {
             OpponentClub(
                 id = "OPP-01", name = "Manchester Blue FC", shortName = "MCI",
                 badgeColorHex = 0xFF6CABDD, secondaryBadgeColorHex = 0xFFFFFFFF,
+                imageUrl = "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=256&auto=format&fit=crop&q=80",
                 league = "Apex Premier League", overallRating = 89, attackRating = 91, midfieldRating = 90, defenseRating = 87,
                 managerName = "Pep Guard", formation = FormationType.F_433
             ),
             OpponentClub(
-                id = "OPP-02", name = "Real Madrid CF", shortName = "RMA",
+                id = "OPP-02", name = "Madrid Royal", shortName = "RMA",
                 badgeColorHex = 0xFFFFFFFF, secondaryBadgeColorHex = 0xFFFFD700,
+                imageUrl = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=256&auto=format&fit=crop&q=80",
                 league = "Apex Premier League", overallRating = 90, attackRating = 92, midfieldRating = 89, defenseRating = 88,
                 managerName = "Carlo Mystique", formation = FormationType.F_433
             ),
             OpponentClub(
-                id = "OPP-03", name = "Bayern Munich Elite", shortName = "BAY",
+                id = "OPP-03", name = "Munich Titans", shortName = "BAY",
                 badgeColorHex = 0xFFDC052D, secondaryBadgeColorHex = 0xFF0066B2,
+                imageUrl = "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=256&auto=format&fit=crop&q=80",
                 league = "Apex Premier League", overallRating = 88, attackRating = 90, midfieldRating = 87, defenseRating = 86,
                 managerName = "Vincent Komp", formation = FormationType.F_4231
             ),
             OpponentClub(
                 id = "OPP-04", name = "Paris Saint-Germain", shortName = "PSG",
                 badgeColorHex = 0xFF004170, secondaryBadgeColorHex = 0xFFDA291C,
+                imageUrl = "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=256&auto=format&fit=crop&q=80",
                 league = "Continental Super League", overallRating = 87, attackRating = 89, midfieldRating = 86, defenseRating = 85,
                 managerName = "Luis Enrique", formation = FormationType.F_433
             ),
             OpponentClub(
                 id = "OPP-05", name = "Inter Milan Stars", shortName = "INT",
                 badgeColorHex = 0xFF001EA0, secondaryBadgeColorHex = 0xFF000000,
+                imageUrl = "https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=256&auto=format&fit=crop&q=80",
                 league = "Continental Super League", overallRating = 86, attackRating = 86, midfieldRating = 87, defenseRating = 88,
                 managerName = "Simone Inzaghi", formation = FormationType.F_352
             ),
             OpponentClub(
-                id = "OPP-06", name = "Flamengo Regatas", shortName = "FLA",
-                badgeColorHex = 0xFFC22A1E, secondaryBadgeColorHex = 0xFF000000,
-                league = "Americas Champions Cup", overallRating = 83, attackRating = 85, midfieldRating = 82, defenseRating = 81,
-                managerName = "Tite Silva", formation = FormationType.F_4231
+                id = "OPP-06", name = "Catalonia FC", shortName = "FCB",
+                badgeColorHex = 0xFF004D98, secondaryBadgeColorHex = 0xFFA50044,
+                imageUrl = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=256&auto=format&fit=crop&q=80",
+                league = "Americas Champions Cup", overallRating = 87, attackRating = 88, midfieldRating = 86, defenseRating = 84,
+                managerName = "Hansi Flick", formation = FormationType.F_4231
             )
         )
     }
