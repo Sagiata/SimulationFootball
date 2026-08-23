@@ -1,0 +1,6 @@
+{
+  "name": "FM Sim",
+  "description": "Tactical Football Manager simulator optimized for mobile landscape. Features live match engine, drag-and-drop squad formation tactics, deep player statistical analysis, scouting talent network, match history records, and competitive regional leaderboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

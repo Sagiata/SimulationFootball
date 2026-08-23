@@ -1,0 +1,167 @@
+package com.example.data.local.entity
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.example.model.Player
+import com.example.model.PlayerAttributes
+import com.example.model.PlayerRole
+import com.example.model.PlayerSeasonStats
+import com.example.model.TrainingFocus
+
+@Entity(tableName = "players")
+data class PlayerEntity(
+    @PrimaryKey val id: String,
+    val name: String,
+    val number: Int,
+    val primaryRole: PlayerRole,
+    val secondaryRoles: List<PlayerRole> = emptyList(),
+    val overallRating: Int,
+    val potentialRating: Int,
+    val age: Int,
+    val nationality: String,
+    val flagEmoji: String,
+    // Attributes
+    val pace: Int,
+    val shooting: Int,
+    val passing: Int,
+    val dribbling: Int,
+    val defending: Int,
+    val physicality: Int,
+    val tacticalIq: Int,
+    // Dynamic Match State
+    val stamina: Int = 100,
+    val morale: Int = 95,
+    val condition: String = "Match Fit",
+    // Season Statistics
+    val appearances: Int = 0,
+    val goals: Int = 0,
+    val assists: Int = 0,
+    val expectedGoals: Float = 0.0f,
+    val passCompletionPct: Int = 82,
+    val tacklesWon: Int = 0,
+    val cleanSheets: Int = 0,
+    val avgMatchRating: Float = 7.1f,
+    val minutesPlayed: Int = 0,
+    val yellowCards: Int = 0,
+    val redCards: Int = 0,
+    // Contract & Financials
+    val marketValueMillions: Double,
+    val weeklyWageThousands: Int,
+    val isStarter: Boolean = false,
+    val starterSlotIndex: Int = -1,
+    val isCaptain: Boolean = false,
+    val isPenaltyTaker: Boolean = false,
+    val isFreeKickTaker: Boolean = false,
+    val isCornerTaker: Boolean = false,
+    val contractExpiryYear: Int = 2029,
+    val releaseClauseMillions: Double = 0.0,
+    val squadStatus: String = "Important First Team",
+    val trainingFocus: TrainingFocus = TrainingFocus.BALANCED,
+    val trainingProgressPct: Int = 35,
+    val isYouthProspect: Boolean = false,
+    val formHistory: List<Float> = listOf(7.2f, 6.8f, 7.5f, 8.0f, 7.4f)
+) {
+    fun toDomain(): Player = Player(
+        id = id,
+        name = name,
+        number = number,
+        primaryRole = primaryRole,
+        secondaryRoles = secondaryRoles,
+        overallRating = overallRating,
+        potentialRating = potentialRating,
+        age = age,
+        nationality = nationality,
+        flagEmoji = flagEmoji,
+        attributes = PlayerAttributes(
+            pace = pace,
+            shooting = shooting,
+            passing = passing,
+            dribbling = dribbling,
+            defending = defending,
+            physicality = physicality,
+            tacticalIq = tacticalIq
+        ),
+        stamina = stamina,
+        morale = morale,
+        condition = condition,
+        seasonStats = PlayerSeasonStats(
+            appearances = appearances,
+            goals = goals,
+            assists = assists,
+            expectedGoals = expectedGoals,
+            passCompletionPct = passCompletionPct,
+            tacklesWon = tacklesWon,
+            cleanSheets = cleanSheets,
+            avgMatchRating = avgMatchRating,
+            minutesPlayed = minutesPlayed,
+            yellowCards = yellowCards,
+            redCards = redCards
+        ),
+        marketValueMillions = marketValueMillions,
+        weeklyWageThousands = weeklyWageThousands,
+        isStarter = isStarter,
+        starterSlotIndex = starterSlotIndex,
+        isCaptain = isCaptain,
+        isPenaltyTaker = isPenaltyTaker,
+        isFreeKickTaker = isFreeKickTaker,
+        isCornerTaker = isCornerTaker,
+        contractExpiryYear = contractExpiryYear,
+        releaseClauseMillions = releaseClauseMillions,
+        squadStatus = squadStatus,
+        trainingFocus = trainingFocus,
+        trainingProgressPct = trainingProgressPct,
+        isYouthProspect = isYouthProspect,
+        formHistory = formHistory
+    )
+
+    companion object {
+        fun fromDomain(player: Player): PlayerEntity = PlayerEntity(
+            id = player.id,
+            name = player.name,
+            number = player.number,
+            primaryRole = player.primaryRole,
+            secondaryRoles = player.secondaryRoles,
+            overallRating = player.overallRating,
+            potentialRating = player.potentialRating,
+            age = player.age,
+            nationality = player.nationality,
+            flagEmoji = player.flagEmoji,
+            pace = player.attributes.pace,
+            shooting = player.attributes.shooting,
+            passing = player.attributes.passing,
+            dribbling = player.attributes.dribbling,
+            defending = player.attributes.defending,
+            physicality = player.attributes.physicality,
+            tacticalIq = player.attributes.tacticalIq,
+            stamina = player.stamina,
+            morale = player.morale,
+            condition = player.condition,
+            appearances = player.seasonStats.appearances,
+            goals = player.seasonStats.goals,
+            assists = player.seasonStats.assists,
+            expectedGoals = player.seasonStats.expectedGoals,
+            passCompletionPct = player.seasonStats.passCompletionPct,
+            tacklesWon = player.seasonStats.tacklesWon,
+            cleanSheets = player.seasonStats.cleanSheets,
+            avgMatchRating = player.seasonStats.avgMatchRating,
+            minutesPlayed = player.seasonStats.minutesPlayed,
+            yellowCards = player.seasonStats.yellowCards,
+            redCards = player.seasonStats.redCards,
+            marketValueMillions = player.marketValueMillions,
+            weeklyWageThousands = player.weeklyWageThousands,
+            isStarter = player.isStarter,
+            starterSlotIndex = player.starterSlotIndex,
+            isCaptain = player.isCaptain,
+            isPenaltyTaker = player.isPenaltyTaker,
+            isFreeKickTaker = player.isFreeKickTaker,
+            isCornerTaker = player.isCornerTaker,
+            contractExpiryYear = player.contractExpiryYear,
+            releaseClauseMillions = player.releaseClauseMillions,
+            squadStatus = player.squadStatus,
+            trainingFocus = player.trainingFocus,
+            trainingProgressPct = player.trainingProgressPct,
+            isYouthProspect = player.isYouthProspect,
+            formHistory = player.formHistory
+        )
+    }
+}
